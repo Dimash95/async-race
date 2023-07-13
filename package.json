@@ -1,7 +1,7 @@
 {
-  "name": "migration-newip-to-ts",
+  "name": "async-race-project",
   "version": "1.0.0",
-  "description": "",
+  "description": "Fun with promises",
   "main": "webpack.base.config.js",
   "scripts": {
     "start": "webpack serve --open --config ./webpack.config.js --env mode=dev",
@@ -13,7 +13,7 @@
     "url": ""
   },
   "keywords": [],
-  "author": "Aleh Serhiyenia",
+  "author": "mikhama",
   "license": "ISC",
   "homepage": "",
   "devDependencies": {

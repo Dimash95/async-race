@@ -14,16 +14,24 @@ const baseConfig = {
         use: ['ts-loader'],
       },
       {
+        test: /\.html$/i,
+        use: 'html-loader',
+      },
+      {
         test: [/\.css$/i],
         use: ['style-loader', 'css-loader'],
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
-        type: 'asset/resource',
+        test: /\.(png|jpe?g|gif)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+          },
+        ],
       },
       {
-        test: /\.html$/i,
-        use: 'html-loader',
+        test: /\.svg$/,
+        loader: 'svg-inline-loader',
       },
     ],
   },

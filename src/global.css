@@ -5,6 +5,7 @@ body {
 }
 
 button {
+  background-color: bisque;
   color: rgb(35, 33, 33);
   border: none;
 }
@@ -50,15 +51,41 @@ button {
   margin-top: 20px;
 }
 
+.road-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.road-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 20px;
+}
+
+.full-road {
+  width: 100%;
+  border-bottom: 1px dashed beige;
+}
+
 .road {
   display: flex;
-  gap: 10px;
-  margin-top: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px dashed beige;
+  justify-content: space-between;
+  width: 90%;
 }
 
 .redFlag {
   margin-right: 0;
   margin-left: auto;
+}
+
+.car {
+  display: flex;
+  align-items: flex-end;
+}
+
+.red-flag {
+  width: 30px;
+  height: 30px;
 }

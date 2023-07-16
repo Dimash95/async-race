@@ -90,27 +90,43 @@ const carName = document.createElement('div');
 carName.textContent = 'Tesla';
 selectRemoveCarName.append(carName);
 
-const road = document.createElement('div');
-road.classList.add('road');
-garageContent.append(road);
+const roadContainer = document.createElement('div');
+roadContainer.classList.add('road-container');
+garageContent.append(roadContainer);
+
+const roadButtons = document.createElement('div');
+roadButtons.classList.add('road-buttons');
+roadContainer.append(roadButtons);
 
 const pointAButton = document.createElement('button');
 pointAButton.textContent = 'A';
-road.append(pointAButton);
+roadButtons.append(pointAButton);
 
 const pointBButton = document.createElement('button');
 pointBButton.textContent = 'B';
-road.append(pointBButton);
+roadButtons.append(pointBButton);
 
-const carSvg = document.querySelector('.boardMarkup') as HTMLDivElement;
-carSvg.innerHTML = `&ltsvg xmlns="http://www.w3.org/2000/svg" id="pict" height="500" width="500"&gt
-&ltcircle cx="300" cy="300" r="200" fill="black"/&gt
-&lt/svg&gt`;
-road.append(carSvg);
+const fullRoad = document.createElement('div');
+fullRoad.classList.add('full-road');
+roadContainer.append(fullRoad);
 
-const redFlagImg = document.createElement('img');
-redFlagImg.src = './assets/svg/red-flag.png';
-road.append(redFlagImg);
+const road = document.createElement('div');
+road.classList.add('road');
+fullRoad.append(road);
+
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" height="1.5em" viewBox="0 0 640 512"><style>svg{fill:green}</style><path d="M171.3 96H224v96H111.3l30.4-75.9C146.5 104 158.2 96 171.3 96zM272 192V96h81.2c9.7 0 18.9 4.4 25 12l67.2 84H272zm256.2 1L428.2 68c-18.2-22.8-45.8-36-75-36H171.3c-39.3 0-74.6 23.9-89.1 60.3L40.6 196.4C16.8 205.8 0 228.9 0 256V368c0 17.7 14.3 32 32 32H65.3c7.6 45.4 47.1 80 94.7 80s87.1-34.6 94.7-80H385.3c7.6 45.4 47.1 80 94.7 80s87.1-34.6 94.7-80H608c17.7 0 32-14.3 32-32V320c0-65.2-48.8-119-111.8-127zM434.7 368a48 48 0 1 1 90.5 32 48 48 0 1 1 -90.5-32zM160 336a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>`;
+
+const car = document.createElement('div');
+car.classList.add('car');
+car.innerHTML = svg;
+car.style.fill = 'red';
+road.append(car);
+
+const redFlag = document.createElement('img');
+import redFlagImg from './asset/resource/svg/red-flag.png';
+redFlag.src = redFlagImg;
+redFlag.classList.add('red-flag');
+road.append(redFlag);
 
 fetch('http://127.0.0.1:3000/garage?_page=2&_limit=1')
   .then(function (resp) {

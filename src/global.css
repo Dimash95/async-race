@@ -1,57 +1,64 @@
 body {
-  color: #fff;
-  background: #17181c;
-  font-family: sans-serif;
+  padding: 20px;
+  background: rgb(35, 33, 33);
+  color: bisque;
 }
 
-.wrapper {
-  min-height: 100vh;
+button {
+  color: rgb(35, 33, 33);
+  border: none;
+}
+
+.garage-button,
+.winners-button {
+  font-size: 20px;
+}
+.garage-winners-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.main-buttons {
   display: flex;
   flex-direction: column;
-}
-
-header {
-  padding: 10px 30px;
-}
-
-header h1 {
-  font-size: 40px;
-  font-weight: 800;
-}
-
-main {
-  flex: 1 1 auto;
-}
-
-footer {
-  height: 100px;
-}
-
-footer .copyright {
-  font-size: 20px;
-  color: #333;
-  text-align: center;
-}
-
-footer .copyright a {
-  color: #444;
-}
-
-footer .copyright a:hover {
-  color: #555;
-}
-
-.footer__container {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0 150px;
+  gap: 10px;
+  margin-top: 20px;
 }
 
-.footer__container__list {
+.race-reset-generate-cars {
   display: flex;
+  gap: 10px;
 }
 
-.footer__container__list-item {
-  list-style: none;
+.garage-content {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+.garage-content h2,
+.garage-content p {
+  margin: 0 auto;
+  margin-top: 10px;
+}
+
+.select-remove-car-name {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.road {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed beige;
+}
+
+.redFlag {
+  margin-right: 0;
+  margin-left: auto;
 }

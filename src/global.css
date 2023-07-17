@@ -26,6 +26,11 @@ button {
   margin-top: 10px;
 }
 
+.car-full-container {
+  display: flex;
+  flex-direction: column;
+}
+
 .select-remove-car-name {
   display: flex;
   gap: 10px;

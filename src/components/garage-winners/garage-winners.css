@@ -1,0 +1,9 @@
+.garage-button,
+.winners-button {
+  font-size: 20px;
+}
+.garage-winners-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}

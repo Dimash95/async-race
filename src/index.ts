@@ -1,22 +1,10 @@
 import './global.css';
-
-const body = document.querySelector('body') as HTMLElement;
-
-const garageAndWinnersButtons = document.createElement('div');
-garageAndWinnersButtons.classList.add('garage-winners-buttons');
-body.append(garageAndWinnersButtons);
-
-const garageButton = document.createElement('button');
-garageButton.textContent = 'Garage';
-garageButton.classList.add('garage-button');
-garageAndWinnersButtons.append(garageButton);
-
-const winnersButton = document.createElement('button');
-winnersButton.textContent = 'Winners';
-winnersButton.classList.add('winners-button');
-garageAndWinnersButtons.append(winnersButton);
+import garageWinners from './components/garage-winners/garage-winners';
+garageWinners();
 
 //////// * mainButtons
+
+const body = document.querySelector('body') as HTMLElement;
 
 const garagePageContent = document.createElement('div');
 garagePageContent.classList.add('garage-page-content');
@@ -30,7 +18,18 @@ const createContainer = document.createElement('div');
 createContainer.classList.add('create-container');
 mainButtons.append(createContainer);
 
+const inputTextCreate = document.createElement('input');
+inputTextCreate.classList.add('input-text-create');
+inputTextCreate.type = 'text';
+createContainer.append(inputTextCreate);
+
+const inputColorCreate = document.createElement('input');
+inputColorCreate.classList.add('input-color-create');
+inputColorCreate.type = 'color';
+createContainer.append(inputColorCreate);
+
 const createButton = document.createElement('button');
+createButton.classList.add('button-create');
 createButton.textContent = 'Create';
 createContainer.append(createButton);
 
@@ -38,9 +37,21 @@ const updateContainer = document.createElement('div');
 updateContainer.classList.add('update-container');
 mainButtons.append(updateContainer);
 
+const inputTextUpdate = document.createElement('input');
+inputTextUpdate.classList.add('input-text-update');
+inputTextUpdate.type = 'text';
+updateContainer.append(inputTextUpdate);
+
+const inputColorUpdate = document.createElement('input');
+inputColorUpdate.classList.add('input-color-update');
+inputColorUpdate.type = 'color';
+updateContainer.append(inputColorUpdate);
+
 const updateButton = document.createElement('button');
 updateButton.textContent = 'Update';
 updateContainer.append(updateButton);
+
+//////// * race-reset-generate-cars
 
 const raceResetGenerateCars = document.createElement('div');
 raceResetGenerateCars.classList.add('race-reset-generate-cars');
@@ -127,14 +138,3 @@ import redFlagImg from './asset/resource/svg/red-flag.png';
 redFlag.src = redFlagImg;
 redFlag.classList.add('red-flag');
 road.append(redFlag);
-
-fetch('http://127.0.0.1:3000/garage?_page=2&_limit=1')
-  .then(function (resp) {
-    return resp.json();
-  })
-  .then(function (data) {
-    console.log(data);
-  })
-  .catch(function (error) {
-    console.log(error);
-  });

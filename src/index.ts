@@ -70,6 +70,12 @@ const generateCars = document.createElement('button');
 generateCars.textContent = 'Generate cars';
 raceResetGenerateCars.append(generateCars);
 
+generateCars.addEventListener('click', () => {
+  for (let i = 0; i < 100; i++) {
+    createCar();
+  }
+});
+
 //////// * Cars title
 
 const garageContent = document.createElement('div');
@@ -137,12 +143,12 @@ function createCar() {
   road.classList.add('road');
   fullRoad.append(road);
 
-  const svg = `<svg id="red-flag-${id}" xmlns="http://www.w3.org/2000/svg" height="1.5em" viewBox="0 0 640 512"><style>svg{fill:${inputColorCreate.value}}</style><path d="M171.3 96H224v96H111.3l30.4-75.9C146.5 104 158.2 96 171.3 96zM272 192V96h81.2c9.7 0 18.9 4.4 25 12l67.2 84H272zm256.2 1L428.2 68c-18.2-22.8-45.8-36-75-36H171.3c-39.3 0-74.6 23.9-89.1 60.3L40.6 196.4C16.8 205.8 0 228.9 0 256V368c0 17.7 14.3 32 32 32H65.3c7.6 45.4 47.1 80 94.7 80s87.1-34.6 94.7-80H385.3c7.6 45.4 47.1 80 94.7 80s87.1-34.6 94.7-80H608c17.7 0 32-14.3 32-32V320c0-65.2-48.8-119-111.8-127zM434.7 368a48 48 0 1 1 90.5 32 48 48 0 1 1 -90.5-32zM160 336a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>`;
+  const svg = `<svg id="red-flag-${id}" xmlns="http://www.w3.org/2000/svg" height="1.5em" viewBox="0 0 640 512"><style>svg{fill:black}</style><path d="M171.3 96H224v96H111.3l30.4-75.9C146.5 104 158.2 96 171.3 96zM272 192V96h81.2c9.7 0 18.9 4.4 25 12l67.2 84H272zm256.2 1L428.2 68c-18.2-22.8-45.8-36-75-36H171.3c-39.3 0-74.6 23.9-89.1 60.3L40.6 196.4C16.8 205.8 0 228.9 0 256V368c0 17.7 14.3 32 32 32H65.3c7.6 45.4 47.1 80 94.7 80s87.1-34.6 94.7-80H385.3c7.6 45.4 47.1 80 94.7 80s87.1-34.6 94.7-80H608c17.7 0 32-14.3 32-32V320c0-65.2-48.8-119-111.8-127zM434.7 368a48 48 0 1 1 90.5 32 48 48 0 1 1 -90.5-32zM160 336a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>`;
 
   const car = document.createElement('div');
   car.classList.add('car');
   car.innerHTML = svg;
-  car.style.fill = 'red';
+  car.style.fill = inputColorCreate.value;
   road.append(car);
 
   const redFlag = document.createElement('img');
@@ -151,6 +157,7 @@ function createCar() {
   road.append(redFlag);
 
   removeContainer(document.querySelectorAll('.remove-button'), document.querySelectorAll('.car-full-container'));
+  showQuantityCars();
 }
 
 createButton.addEventListener('click', createCar);
@@ -159,6 +166,13 @@ function removeContainer(removeButtons: NodeListOf<Element>, carFullContainer: N
   for (let i = 0; i < removeButtons.length; i++) {
     removeButtons[i].addEventListener('click', () => {
       carFullContainer[i].remove();
+      showQuantityCars();
     });
   }
+}
+
+function showQuantityCars() {
+  const allCars = document.querySelectorAll('.car-full-container');
+  console.log(allCars.length);
+  garageTitle.textContent = `Garage (${allCars.length})`;
 }

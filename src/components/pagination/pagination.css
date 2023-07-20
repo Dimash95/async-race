@@ -1,0 +1,29 @@
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 40px;
+  width: 100%;
+}
+
+.pagination {
+  width: 500px;
+  border-radius: 35px;
+  box-shadow: 0 0 20px 5px beige;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(35, 33, 33);
+  padding: 10px 10px;
+}
+
+.pagination ul {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.pagination ul li {
+  cursor: pointer;
+  list-style: none;
+}

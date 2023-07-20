@@ -8,22 +8,40 @@
 
 .pagination {
   width: 500px;
+  height: 50px;
   border-radius: 35px;
   box-shadow: 0 0 20px 5px beige;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: rgb(35, 33, 33);
-  padding: 10px 10px;
 }
 
 .pagination ul {
   display: flex;
   justify-content: center;
-  gap: 15px;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
 }
 
 .pagination ul li {
   cursor: pointer;
   list-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgb(35, 33, 33);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+}
+
+.pagination ul li:hover {
+  border: 1px solid bisque;
+}
+
+.pagination ul li:active {
+  background-color: bisque;
+  color: rgb(35, 33, 33);
 }

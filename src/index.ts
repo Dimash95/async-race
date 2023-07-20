@@ -260,6 +260,7 @@ function showPage() {
   liAll.forEach((e, index) => {
     e.addEventListener('click', () => {
       currentPage = index + 1;
+      pageNumber.textContent = `Page #${currentPage}`;
       displayPage();
     });
   });

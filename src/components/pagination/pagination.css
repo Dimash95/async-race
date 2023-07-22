@@ -7,13 +7,13 @@
 }
 
 .pagination {
-  width: 500px;
-  height: 50px;
-  border-radius: 35px;
-  box-shadow: 0 0 20px 5px beige;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 500px;
+  padding: 5px 20px;
+  border-radius: 35px;
+  box-shadow: 0 0 20px 5px beige;
   background-color: rgb(35, 33, 33);
 }
 
@@ -44,4 +44,9 @@
 .pagination ul li:active {
   background-color: bisque;
   color: rgb(35, 33, 33);
+}
+
+.pagination ul li:focus{
+  background-color: bisque;
+  border: 1px solid bisque;
 }

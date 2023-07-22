@@ -21,6 +21,13 @@ button {
   margin-top: 20px;
 }
 
+.winners-page-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
 .garage-content h2,
 .garage-content p {
   margin: 0 auto;

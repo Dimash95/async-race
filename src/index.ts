@@ -21,6 +21,8 @@ winnersButton.textContent = 'Winners';
 winnersButton.classList.add('winners-button');
 garageAndWinnersButtons.append(winnersButton);
 
+// winnersButton.disabled = false;
+
 const garagePageContent = document.createElement('div');
 garagePageContent.classList.add('garage-page-content');
 body.append(garagePageContent);
@@ -127,14 +129,19 @@ garageButton.addEventListener('click', () => {
 
 //////// * GET CARS
 
+type Car = {
+  name: string;
+  color: string;
+  id: number;
+};
+
 function getCars() {
-  fetch('http://127.0.0.1:3000/garage?_page=2&_limit=1')
-    .then(function (resp) {
-      return resp.json();
-    })
-    .then(function (data) {
-      console.log(data);
-      console.log(data[0].name);
+  fetch('http://127.0.0.1:3000/garage?_page=1&_limit=7')
+    .then((resp) => resp.json())
+    .then(function (data: Car[]) {
+      data.forEach((car) => {
+        createCar(car.color, car.name);
+      });
     })
     .catch(function (error) {
       console.log(error);
@@ -142,10 +149,57 @@ function getCars() {
 }
 getCars();
 
+type Speed = {
+  velocity: number;
+  distance: number;
+};
+
+// type isSuccess = {
+//   success: true;
+// };
+
+race.addEventListener('click', async () => {
+  // const car = document.querySelector('.car');
+  // const time = await
+  fetch('http://127.0.0.1:3000/engine?status=started&id=1', { method: 'PATCH' })
+    .then((resp) => resp.json())
+    .then(function (data: Speed) {
+      return data.distance / data.velocity;
+    })
+    .catch(function (error) {
+      console.log(error);
+      return 0;
+    });
+
+  // add animation
+
+  await fetch('http://127.0.0.1:3000/engine?status=drive&id=1', { method: 'PATCH' })
+    .then((res) => {
+      if (!res.ok) {
+        {
+          if (res.status === 500) {
+            // stop animation
+          }
+
+          throw Error(res.statusText);
+        }
+      }
+      return res;
+    })
+    // .then((resp) => resp.json())
+    /*   .then(function (data: isSuccess) {
+   // return data.distance / data.velocity
+  }) */
+    .catch(function (error: Error) {
+      console.log(error);
+      return 0;
+    });
+});
+
 //////// * generate car
 let id = 0;
 
-function createCar() {
+function createCar(color = '#ffffff', name = 'car') {
   const carFullContainer = document.createElement('div');
   carFullContainer.setAttribute('id', `${id}`);
   carFullContainer.setAttribute('isSelected', 'false');
@@ -170,7 +224,7 @@ function createCar() {
 
   const carName = document.createElement('div');
   carName.classList.add('car-name');
-  carName.textContent = inputTextCreate.value;
+  carName.textContent = name; // inputTextCreate.value;
   inputTextCreate.value = '';
   selectRemoveCarName.append(carName);
 
@@ -201,7 +255,7 @@ function createCar() {
   const car = document.createElement('div');
   car.classList.add('car');
   car.innerHTML = showSvg();
-  car.style.fill = inputColorCreate.value;
+  car.style.fill = color; // inputColorCreate.value;
   road.append(car);
 
   const redFlag = document.createElement('img');
@@ -221,18 +275,22 @@ function createCar() {
   showPage();
 }
 
-fetch('http://127.0.0.1:3000/garage?_page=2&_limit="X-Total-Count"')
-  .then(function (resp) {
-    return resp.json();
-  })
-  .then(function (data) {
-    console.log(data);
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
+createButton.addEventListener('click', () => {
+  const headers = new Headers();
+  headers.append('Content-Type', 'application/json');
 
-createButton.addEventListener('click', createCar);
+  const body = JSON.stringify({ name: inputTextCreate.value, color: inputColorCreate.value });
+
+  fetch('http://127.0.0.1:3000/garage', { method: 'POST', headers, body })
+    .then((resp) => resp.json())
+    .then(function (data: Car) {
+      createCar(data.color, data.name);
+      console.log(data);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+});
 
 ////////// * GENERATE 100 CARS
 
@@ -258,7 +316,9 @@ function pressSelectButton(
 
   // function updateCar() {
   updateButton.addEventListener('click', () => {
-    console.log(carAll[selectedId]);
+    //   const x = carAll[selectedId]
+
+    console.log(carAll[selectedId].style);
     carAll[selectedId].style.fill = inputColorUpdate.value;
 
     carNameAll[selectedId].textContent = inputTextUpdate.value;

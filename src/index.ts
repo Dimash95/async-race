@@ -3,6 +3,14 @@ import redFlagImg from './asset/resource/svg/red-flag.png';
 import { showSvg } from './car-svg';
 showSvg();
 
+type Car = {
+  name: string;
+  color: string;
+  id: number;
+};
+
+const selectedCars: Car[] = [];
+
 //////// * mainButtons
 
 const body = document.querySelector('body') as HTMLElement;
@@ -112,7 +120,7 @@ garageContent.append(allCars);
 
 function showQuantityCars() {
   const allCars = document.querySelectorAll('.car-full-container');
-  garageTitle.textContent = `Garage (${allCars.length})`;
+  garageTitle.textContent = `Garage ${allCars.length}`;
 }
 
 ////////////// * GARAGE AND WINNER
@@ -129,18 +137,12 @@ garageButton.addEventListener('click', () => {
 
 //////// * GET CARS
 
-type Car = {
-  name: string;
-  color: string;
-  id: number;
-};
-
-function getCars() {
-  fetch('http://127.0.0.1:3000/garage?_page=1&_limit=7')
+function getCars(page = 1) {
+  fetch(`http://127.0.0.1:3000/garage?_page=${page}&_limit=7`)
     .then((resp) => resp.json())
-    .then(function (data: Car[]) {
-      data.forEach((car) => {
-        createCar(car.color, car.name);
+    .then(function (cars: Car[]) {
+      cars.forEach((car) => {
+        createCar(car);
       });
     })
     .catch(function (error) {
@@ -197,11 +199,9 @@ race.addEventListener('click', async () => {
 });
 
 //////// * generate car
-let id = 0;
-
-function createCar(color = '#ffffff', name = 'car') {
+function createCar(car: Car) {
   const carFullContainer = document.createElement('div');
-  carFullContainer.setAttribute('id', `${id}`);
+  carFullContainer.setAttribute('id', `${car.id}`);
   carFullContainer.setAttribute('isSelected', 'false');
   carFullContainer.classList.add('car-full-container');
   allCars.append(carFullContainer);
@@ -215,16 +215,25 @@ function createCar(color = '#ffffff', name = 'car') {
   selectButton.classList.add('select-button');
   selectRemoveCarName.append(selectButton);
 
+  selectButton.addEventListener('click', () => {
+    selectedCars.push(car);
+  });
+
   const removeButton = document.createElement('button');
   removeButton.textContent = 'Remove';
   removeButton.classList.add('remove-button');
-  removeButton.setAttribute('data-id', `${id}`);
-  id++;
+  removeButton.setAttribute('data-id', `${car.id}`);
   selectRemoveCarName.append(removeButton);
+
+  removeButton.addEventListener('click', () => {
+    deleteCarRequest(car.id).then(() => {
+      carFullContainer.remove();
+    });
+  });
 
   const carName = document.createElement('div');
   carName.classList.add('car-name');
-  carName.textContent = name; // inputTextCreate.value;
+  carName.textContent = car.name;
   inputTextCreate.value = '';
   selectRemoveCarName.append(carName);
 
@@ -252,18 +261,17 @@ function createCar(color = '#ffffff', name = 'car') {
   road.classList.add('road');
   fullRoad.append(road);
 
-  const car = document.createElement('div');
-  car.classList.add('car');
-  car.innerHTML = showSvg();
-  car.style.fill = color; // inputColorCreate.value;
-  road.append(car);
+  const carElement = document.createElement('div');
+  carElement.classList.add('car');
+  carElement.innerHTML = showSvg();
+  carElement.style.fill = car.color; // inputColorCreate.value;
+  road.append(carElement);
 
   const redFlag = document.createElement('img');
   redFlag.src = redFlagImg;
   redFlag.classList.add('red-flag');
   road.append(redFlag);
 
-  removeContainer(document.querySelectorAll('.remove-button'), document.querySelectorAll('.car-full-container'));
   pressSelectButton(
     document.querySelectorAll('.select-button'),
     document.querySelectorAll('.car'),
@@ -275,6 +283,13 @@ function createCar(color = '#ffffff', name = 'car') {
   showPage();
 }
 
+async function deleteCarRequest(carId: number): Promise<void> {
+  const headers = new Headers();
+  headers.append('Content-Type', 'application/json');
+
+  await fetch(`http://127.0.0.1:3000/garage/${carId}`, { method: 'DELETE', headers });
+}
+
 createButton.addEventListener('click', () => {
   const headers = new Headers();
   headers.append('Content-Type', 'application/json');
@@ -283,9 +298,8 @@ createButton.addEventListener('click', () => {
 
   fetch('http://127.0.0.1:3000/garage', { method: 'POST', headers, body })
     .then((resp) => resp.json())
-    .then(function (data: Car) {
-      createCar(data.color, data.name);
-      console.log(data);
+    .then((car: Car) => {
+      createCar(car); // { id: number, name: string, color: string }
     })
     .catch(function (error) {
       console.log(error);
@@ -294,11 +308,11 @@ createButton.addEventListener('click', () => {
 
 ////////// * GENERATE 100 CARS
 
-generateCars.addEventListener('click', () => {
-  for (let i = 0; i < 100; i++) {
-    createCar();
-  }
-});
+// generateCars.addEventListener('click', () => {
+//   for (let i = 0; i < 100; i++) {
+//     createCar();
+//   }
+// });
 
 ////////// * SELECT BUTTON
 let selectedId = 0;
@@ -328,17 +342,6 @@ function pressSelectButton(
   });
 }
 // }
-
-////////// * REMOVE BUTTON
-
-function removeContainer(removeButtons: NodeListOf<Element>, carFullContainer: NodeListOf<Element>) {
-  for (let i = 0; i < removeButtons.length; i++) {
-    removeButtons[i].addEventListener('click', () => {
-      carFullContainer[i].remove();
-      showQuantityCars();
-    });
-  }
-}
 
 ////////////// * PAGINATION
 

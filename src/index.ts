@@ -9,7 +9,10 @@ type Car = {
   id: number;
 };
 
-const selectedCars: Car[] = [];
+type Speed = {
+  velocity: number;
+  distance: number;
+};
 
 //////// * mainButtons
 
@@ -118,10 +121,11 @@ const allCars = document.createElement('div');
 allCars.classList.add('all-cars');
 garageContent.append(allCars);
 
-function showQuantityCars() {
-  const allCars = document.querySelectorAll('.car-full-container');
-  garageTitle.textContent = `Garage ${allCars.length}`;
-}
+// function showQuantityCars() {
+//   const allCars = document.querySelectorAll('.car-full-container');
+//   garageTitle.textContent = `Garage ${allCars.length}`;
+// }
+// showQuantityCars();
 
 ////////////// * GARAGE AND WINNER
 
@@ -135,71 +139,9 @@ garageButton.addEventListener('click', () => {
   garagePageContent.classList.remove('disabled');
 });
 
-//////// * GET CARS
-
-function getCars(page = 1) {
-  fetch(`http://127.0.0.1:3000/garage?_page=${page}&_limit=7`)
-    .then((resp) => resp.json())
-    .then(function (cars: Car[]) {
-      cars.forEach((car) => {
-        createCar(car);
-      });
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-}
-getCars();
-
-type Speed = {
-  velocity: number;
-  distance: number;
-};
-
-// type isSuccess = {
-//   success: true;
-// };
-
-race.addEventListener('click', async () => {
-  // const car = document.querySelector('.car');
-  // const time = await
-  fetch('http://127.0.0.1:3000/engine?status=started&id=1', { method: 'PATCH' })
-    .then((resp) => resp.json())
-    .then(function (data: Speed) {
-      return data.distance / data.velocity;
-    })
-    .catch(function (error) {
-      console.log(error);
-      return 0;
-    });
-
-  // add animation
-
-  await fetch('http://127.0.0.1:3000/engine?status=drive&id=1', { method: 'PATCH' })
-    .then((res) => {
-      if (!res.ok) {
-        {
-          if (res.status === 500) {
-            // stop animation
-          }
-
-          throw Error(res.statusText);
-        }
-      }
-      return res;
-    })
-    // .then((resp) => resp.json())
-    /*   .then(function (data: isSuccess) {
-   // return data.distance / data.velocity
-  }) */
-    .catch(function (error: Error) {
-      console.log(error);
-      return 0;
-    });
-});
-
 //////// * generate car
-function createCar(car: Car) {
+
+function displayCar(car: Car) {
   const carFullContainer = document.createElement('div');
   carFullContainer.setAttribute('id', `${car.id}`);
   carFullContainer.setAttribute('isSelected', 'false');
@@ -216,7 +158,10 @@ function createCar(car: Car) {
   selectRemoveCarName.append(selectButton);
 
   selectButton.addEventListener('click', () => {
-    selectedCars.push(car);
+    updateButton.addEventListener('click', () => {
+      selectCarRequest(car.id);
+      window.location.reload();
+    });
   });
 
   const removeButton = document.createElement('button');
@@ -229,6 +174,7 @@ function createCar(car: Car) {
     deleteCarRequest(car.id).then(() => {
       carFullContainer.remove();
     });
+    window.location.reload();
   });
 
   const carName = document.createElement('div');
@@ -271,77 +217,156 @@ function createCar(car: Car) {
   redFlag.src = redFlagImg;
   redFlag.classList.add('red-flag');
   road.append(redFlag);
-
-  pressSelectButton(
-    document.querySelectorAll('.select-button'),
-    document.querySelectorAll('.car'),
-    document.querySelectorAll('.car-name')
-  );
-  showQuantityCars();
-  displayPage();
-  displayPageNumbers();
-  showPage();
 }
+
+//////// * GET CARS
+
+async function getCars(page = 1) {
+  await fetch(`http://127.0.0.1:3000/garage?_page=${page}&_limit=7`)
+    .then((res) => {
+      garageTitle.textContent = `Garage ${res.headers.get('X-Total-Count')}`;
+      return res;
+    })
+    .then((resp) => resp.json())
+    .then(function (cars: Car[]) {
+      cars.forEach((car) => {
+        displayCar(car);
+      });
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  await displayPageNumbers();
+}
+getCars();
+
+async function showQuantityCars() {
+  const response = await fetch(`http://127.0.0.1:3000/garage?_page=${1}&_limit=7`, { method: 'GET' });
+  const totalCount = response.headers.get('X-Total-Count');
+
+  garageTitle.textContent = `Garage ${totalCount}`;
+
+  return +(totalCount ?? 0);
+}
+
+////////// * CREATE CAR
+
+createButton.addEventListener('click', async () => {
+  const headers = new Headers();
+  headers.append('Content-Type', 'application/json');
+
+  const body = JSON.stringify({ name: inputTextCreate.value, color: inputColorCreate.value });
+
+  await fetch('http://127.0.0.1:3000/garage', { method: 'POST', headers, body })
+    .then((resp) => resp.json())
+    .then((car: Car) => {
+      displayCar(car); // { id: number, name: string, color: string }
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  await showQuantityCars();
+});
+
+////////// * SELECT CAR
+
+function selectCarRequest(carId: number) {
+  const headers = new Headers();
+  headers.append('Content-Type', 'application/json');
+
+  const body = JSON.stringify({ name: inputTextUpdate.value, color: inputColorUpdate.value });
+
+  fetch(`http://127.0.0.1:3000/garage/${carId}`, { method: 'PUT', headers, body })
+    .then((resp) => resp.json())
+    .then((car: Car) => {
+      car.color = inputColorUpdate.value;
+      car.name = inputTextUpdate.value;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+}
+
+////////// * DELETE CAR
 
 async function deleteCarRequest(carId: number): Promise<void> {
   const headers = new Headers();
   headers.append('Content-Type', 'application/json');
 
   await fetch(`http://127.0.0.1:3000/garage/${carId}`, { method: 'DELETE', headers });
+  // const total = +(garageTitle.textContent?.split(' ')[1] ?? 0);
+  // garageTitle.textContent = `Garage ${total - 1}`;
+  await getCars();
 }
-
-createButton.addEventListener('click', () => {
-  const headers = new Headers();
-  headers.append('Content-Type', 'application/json');
-
-  const body = JSON.stringify({ name: inputTextCreate.value, color: inputColorCreate.value });
-
-  fetch('http://127.0.0.1:3000/garage', { method: 'POST', headers, body })
-    .then((resp) => resp.json())
-    .then((car: Car) => {
-      createCar(car); // { id: number, name: string, color: string }
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-});
 
 ////////// * GENERATE 100 CARS
 
-// generateCars.addEventListener('click', () => {
-//   for (let i = 0; i < 100; i++) {
-//     createCar();
-//   }
-// });
+generateCars.addEventListener('click', async () => {
+  for (let i = 0; i < 100; i++) {
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/json');
 
-////////// * SELECT BUTTON
-let selectedId = 0;
+    const randomColor =
+      '#' +
+      Math.floor(Math.random() * 16777215)
+        .toString(16)
+        .padStart(6, '0')
+        .toUpperCase();
 
-function pressSelectButton(
-  selectButtonsAll: NodeListOf<Element>,
-  carAll: NodeListOf<HTMLDivElement>,
-  carNameAll: NodeListOf<Element>
-) {
-  for (let i = 0; i < selectButtonsAll.length; i++) {
-    selectButtonsAll[i].addEventListener('click', () => {
-      selectedId = i;
-    });
+    const randomName = randomCarName[i];
+    const body = JSON.stringify({ name: randomName, color: randomColor });
+
+    await fetch('http://127.0.0.1:3000/garage', { method: 'POST', headers, body })
+      .then((resp) => resp.json())
+      .then((car: Car) => {
+        displayCar(car); // { id: number, name: string, color: string }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
+  window.location.reload();
+});
 
-  // function updateCar() {
-  updateButton.addEventListener('click', () => {
-    //   const x = carAll[selectedId]
+////////////// * START
 
-    console.log(carAll[selectedId].style);
-    carAll[selectedId].style.fill = inputColorUpdate.value;
+race.addEventListener('click', async () => {
+  // const car = document.querySelector('.car');
+  // const time = await
+  fetch('http://127.0.0.1:3000/engine?status=started&id=1', { method: 'PATCH' })
+    .then((resp) => resp.json())
+    .then(function (data: Speed) {
+      return data.distance / data.velocity;
+    })
+    .catch(function (error) {
+      console.log(error);
+      return 0;
+    });
 
-    carNameAll[selectedId].textContent = inputTextUpdate.value;
-    console.log(inputTextUpdate.value);
+  // add animation
 
-    inputTextUpdate.value = '';
-  });
-}
-// }
+  await fetch('http://127.0.0.1:3000/engine?status=drive&id=1', { method: 'PATCH' })
+    .then((res) => {
+      if (!res.ok) {
+        {
+          if (res.status === 500) {
+            // stop animation
+          }
+
+          throw Error(res.statusText);
+        }
+      }
+      return res;
+    })
+    // .then((resp) => resp.json())
+    /*   .then(function (data: isSuccess) {
+   // return data.distance / data.velocity
+  }) */
+    .catch(function (error: Error) {
+      console.log(error);
+      return 0;
+    });
+});
 
 ////////////// * PAGINATION
 
@@ -359,22 +384,9 @@ pagination.append(pageNumbers);
 const CAR_ROWS = 7;
 let currentPage = 1;
 
-function displayPage() {
-  const start = currentPage * CAR_ROWS - CAR_ROWS;
-  const end = start + CAR_ROWS;
-  const paginatedData = [...allCars.children].slice(start, end);
-
-  [...allCars.children].forEach((e) => {
-    e.classList.add('disabled');
-  });
-
-  paginatedData.forEach((e) => {
-    e.classList.remove('disabled');
-  });
-}
-
-function displayPageNumbers() {
-  const pages = Math.ceil(allCars.children.length / CAR_ROWS);
+async function displayPageNumbers() {
+  const totalCount = await showQuantityCars();
+  const pages = Math.ceil(totalCount / CAR_ROWS);
 
   const liAll = document.querySelectorAll('.li');
 
@@ -387,19 +399,118 @@ function displayPageNumbers() {
     li.classList.add('li');
     li.innerHTML = i.toString();
     pageNumbers.appendChild(li);
+
+    li.addEventListener('click', () => {
+      currentPage = i;
+
+      pageNumber.textContent = `Page #${currentPage}`;
+      allCars.innerHTML = '';
+      getCars(currentPage);
+    });
   }
 }
 
-function showPage() {
-  const liAll = document.querySelectorAll('.li');
+////////////// * RANDOM CAR
 
-  liAll.forEach((e, index) => {
-    e.addEventListener('click', () => {
-      currentPage = index + 1;
-      pageNumber.textContent = `Page #${currentPage}`;
-      displayPage();
-    });
-  });
-}
-
-////////////// * ASYNC
+const randomCarName = [
+  'Toyota Camry',
+  'Honda Accord',
+  'Ford Mustang',
+  'Chevrolet Corvette',
+  'Nissan Rogue',
+  'BMW X5',
+  'Mercedes-Benz C-Class',
+  'Volkswagen Golf',
+  'Audi Q7',
+  'Hyundai Sonata',
+  'Subaru Outback',
+  'Kia Soul',
+  'Mazda CX-5',
+  'Jeep Wrangler',
+  'Lexus RX',
+  'Tesla Model S',
+  'GMC Sierra',
+  'Chrysler Pacifica',
+  'Buick Enclave',
+  'Acura TLX',
+  'Infiniti Q50',
+  'Cadillac Escalade',
+  'Mini Cooper',
+  'Porsche 911',
+  'Jaguar F-Pace',
+  'Land Rover Discovery',
+  'Bentley Continental',
+  'Rolls-Royce Phantom',
+  'Aston Martin DB11',
+  'McLaren 720S',
+  'Ferrari 488',
+  'Lamborghini Huracan',
+  'Maserati Quattroporte',
+  'Alfa Romeo Giulia',
+  'Peugeot 308',
+  'Renault Captur',
+  'Citroen C3',
+  'Fiat 500',
+  'Opel Astra',
+  'Skoda Octavia',
+  'Seat Leon',
+  'Volvo XC60',
+  'Saab 9-3',
+  'Mitsubishi Outlander',
+  'Daihatsu Terios',
+  'Suzuki Swift',
+  'Subaru Forester',
+  'Dacia Duster',
+  'Lada Niva',
+  'Geely Emgrand',
+  'BYD Tang',
+  'Chery Tiggo',
+  'SsangYong Korando',
+  'Proton Persona',
+  'Tata Nexon',
+  'Mahindra XUV500',
+  'Kia Carnival',
+  'Hyundai Santa Fe',
+  'Genesis G70',
+  'Infiniti QX80',
+  'Acura MDX',
+  'Buick Encore',
+  'Lexus NX',
+  'Lincoln Navigator',
+  'Tesla Model X',
+  'GMC Terrain',
+  'Chrysler 300',
+  'Jeep Grand Cherokee',
+  'Ford Explorer',
+  'Nissan Pathfinder',
+  'Honda Pilot',
+  'Toyota Highlander',
+  'Mazda CX-9',
+  'Subaru Ascent',
+  'Kia Sorento',
+  'Hyundai Tucson',
+  'BMW X3',
+  'Mercedes-Benz GLC',
+  'Volkswagen Tiguan',
+  'Audi Q5',
+  'Porsche Macan',
+  'Jaguar E-Pace',
+  'Land Rover Defender',
+  'Bentley Bentayga',
+  'Rolls-Royce Cullinan',
+  'Aston Martin DBX',
+  'McLaren GT',
+  'Ferrari Roma',
+  'Lamborghini Urus',
+  'Maserati Levante',
+  'Alfa Romeo Stelvio',
+  'Peugeot 508',
+  'Renault Talisman',
+  'Citroen C5',
+  'Fiat Tipo',
+  'Opel Insignia',
+  'Skoda Superb',
+  'Seat Ateca',
+  'Volvo V90',
+  'Saab 9-5',
+];

@@ -1,6 +1,6 @@
-@import './components/garage-winners/garage-winners.css';
-@import './components/create-car/create-car.css';
-@import './components/pagination/pagination.css';
+@import './css/garage-winners.css';
+@import './css/create-car.css';
+@import './css/pagination.css';
 
 body {
   padding: 20px;

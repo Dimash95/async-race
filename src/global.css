@@ -1,0 +1,98 @@
+@import './css/garage-winners.css';
+@import './css/create-car.css';
+@import './css/pagination.css';
+
+body {
+  padding: 20px;
+  background: rgb(35, 33, 33);
+  color: bisque;
+}
+
+button {
+  cursor: pointer;
+  background-color: bisque;
+  color: rgb(35, 33, 33);
+  border: none;
+}
+
+button:hover {
+  opacity: 0.6;
+}
+
+button:active {
+  opacity: 3;
+}
+
+.garage-content {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+.winners-page-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.garage-content h2,
+.garage-content p {
+  margin: 0 auto;
+  margin-top: 10px;
+}
+
+.car-full-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.select-remove-car-name {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.road-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.road-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 20px;
+}
+
+.full-road {
+  width: 100%;
+  border-bottom: 1px dashed beige;
+}
+
+.road {
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+}
+
+.redFlag {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+.car {
+  display: flex;
+  align-items: flex-end;
+}
+
+.red-flag {
+  width: 30px;
+  height: 30px;
+}
+
+.disabled {
+  display: none;
+}
